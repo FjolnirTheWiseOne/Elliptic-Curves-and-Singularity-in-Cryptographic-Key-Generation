@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.widgets import Slider
-import secrets  # Required for cryptographic safe random numbers
+import secrets  
 
 class InteractiveECCValidator:
     def __init__(self):
@@ -18,12 +18,11 @@ class InteractiveECCValidator:
         self.y = np.linspace(-grid_range, grid_range, 400)
         self.X, self.Y = np.meshgrid(self.x, self.y)
 
-        # Initial Parameters (Start with a SINGULAR NODE case for immediate impact)
+
         self.a_init = -3.0
         self.b_init = 2.0
 
         # 2. Text Areas for Engineering Diagnostics (Right side)
-        # [left, bottom, width, height]
         self.text_ax = self.fig.add_axes([0.60, 0.05, 0.38, 0.9]) 
         self.text_ax.axis('off')
         self.info_text = self.text_ax.text(0, 1, "", va='top', fontsize=10, family='monospace')
@@ -41,7 +40,6 @@ class InteractiveECCValidator:
         self.slider_a.on_changed(self.update)
         self.slider_b.on_changed(self.update)
 
-        # Initial Draw
         self.update(None)
 
     def calculate_discriminant(self, a, b):
@@ -61,7 +59,6 @@ class InteractiveECCValidator:
             status = "INSECURE (SINGULAR)"
             color = 'red'
             
-            # Check for Cusp (a=0, b=0) vs Node
             if np.abs(a) < 0.1 and np.abs(b) < 0.1:
                 type_sing = "CUSP (y² = x³)"
                 desc = ("Visual: Sharp point at origin (0,0).\n"
@@ -113,14 +110,12 @@ class InteractiveECCValidator:
         self.ax.set_xlabel("x")
         self.ax.set_ylabel("y")
 
-        # 3. SIMULATE KEY GENERATION (The new requirement)
+        # 3. SIMULATE KEY GENERATION
         if color == 'green':
             # Generate a random 256-bit integer (simulated private key)
             priv_int = secrets.randbits(256)
-            priv_hex = hex(priv_int)[2:18] # Truncate for display
-            
-            # Generate a fake public key string for demo purposes
-            # (In a real library, this would be d * G)
+            priv_hex = hex(priv_int)[2:18]
+
             pub_hex = secrets.token_hex(16)
             
             key_block = (f"SIMULATED KEY PAIR GENERATED:\n"
@@ -157,7 +152,6 @@ class InteractiveECCValidator:
             f"   a = -1.0, b = 4.0\n"
         )
         self.info_text.set_text(report)
-        # Change text color based on security status
         self.info_text.set_color('darkred' if color == 'red' else 'darkgreen')
         self.info_text.set_weight('bold')
 
